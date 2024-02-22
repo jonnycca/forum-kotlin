@@ -5,3 +5,6 @@
 0src/main/kotlin/br/com/forum/ForumApplication.kt,6\b\6b1ba5323782ad3fea974c3c23f2d53dace66525
 _
 /src/main/kotlin/br/com/forum/HelloController.kt,9\c\9c7698fe51950c19a281810e05e957275258b5a8
+:
+
+.gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
