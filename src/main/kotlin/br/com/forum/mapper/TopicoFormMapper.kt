@@ -4,7 +4,9 @@ import br.com.forum.dto.NovoTopicoForm
 import br.com.forum.model.Topico
 import br.com.forum.service.CursoService
 import br.com.forum.service.UsuarioService
+import org.springframework.stereotype.Component
 
+@Component
 class TopicoFormMapper(
     private val cursoService: CursoService,
     private val usuarioService: UsuarioService

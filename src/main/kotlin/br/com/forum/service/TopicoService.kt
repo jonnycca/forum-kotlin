@@ -6,19 +6,13 @@ import br.com.forum.dto.TopicoView
 import br.com.forum.exception.NotFoundException
 import br.com.forum.mapper.TopicoFormMapper
 import br.com.forum.mapper.TopicoViewMapper
-import br.com.forum.model.Curso
-import br.com.forum.model.Topico
-import br.com.forum.model.Usuario
 import br.com.forum.repository.TopicoRepository
 import org.springframework.stereotype.Service
-import java.util.*
 import java.util.stream.Collectors
 
 @Service
 class TopicoService(
     private var topicoRepository: TopicoRepository,
-    private val cursoService: CursoService,
-    private val usuarioService: UsuarioService,
     private val topicoViewMapper: TopicoViewMapper,
     private val topicoFormMapper: TopicoFormMapper
 ) {
