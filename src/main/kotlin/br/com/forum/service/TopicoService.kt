@@ -21,13 +21,19 @@ class TopicoService(
         private const val notFoundMessage = "Topico não encontrado"
     }
 
-    fun listar(): List<TopicoView> {
-        return topicoRepository.findAll().stream().map { topico -> topicoViewMapper.map(topico) }.collect(Collectors.toList())
+    fun listar(nomeCurso: String?): List<TopicoView> {
+        val topicos = if (nomeCurso == null) {
+            topicoRepository.findAll()
+        } else {
+            topicoRepository.findByCursoNome(nomeCurso)
+        }
+        return topicos.stream().map { topico -> topicoViewMapper.map(topico) }
+            .collect(Collectors.toList())
     }
 
     fun buscarPorId(id: Long): TopicoView {
         val topico = topicoRepository.findById(id).stream().filter { topico -> topico.id == id }
-            .findFirst().orElseThrow{NotFoundException(notFoundMessage)}
+            .findFirst().orElseThrow { NotFoundException(notFoundMessage) }
         return topicoViewMapper.map(topico)
     }
 
@@ -38,9 +44,10 @@ class TopicoService(
 
     }
 
-    fun atualizar(atualizarTopico: AtualizarTopicoForm) :TopicoView{
-        val topico = topicoRepository.findById(atualizarTopico.id).stream().filter { topico -> topico.id == atualizarTopico.id }
-            .findFirst().orElseThrow{NotFoundException(notFoundMessage)}
+    fun atualizar(atualizarTopico: AtualizarTopicoForm): TopicoView {
+        val topico =
+            topicoRepository.findById(atualizarTopico.id).stream().filter { topico -> topico.id == atualizarTopico.id }
+                .findFirst().orElseThrow { NotFoundException(notFoundMessage) }
 
         topico.titulo = atualizarTopico.titulo
         topico.mensagem = atualizarTopico.mensagem
