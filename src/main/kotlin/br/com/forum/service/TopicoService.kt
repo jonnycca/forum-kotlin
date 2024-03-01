@@ -3,6 +3,7 @@ package br.com.forum.service
 import br.com.forum.dto.AtualizarTopicoForm
 import br.com.forum.dto.NovoTopicoForm
 import br.com.forum.dto.TopicoView
+import br.com.forum.exception.NotFoundException
 import br.com.forum.mapper.TopicoFormMapper
 import br.com.forum.mapper.TopicoViewMapper
 import br.com.forum.model.Curso
@@ -20,6 +21,10 @@ class TopicoService(
     private val topicoViewMapper: TopicoViewMapper,
     private val topicoFormMapper: TopicoFormMapper
 ) {
+
+    companion object {
+        private const val notFoundMessage = "Topico não encontrado"
+    }
     init {
         val topico = Topico(
             id = 1,
@@ -76,7 +81,8 @@ class TopicoService(
     }
 
     fun buscarPorId(id: Long): TopicoView {
-        val topico = topicos.stream().filter { topico -> topico.id == id }.findFirst().get()
+        val topico = topicos.stream().filter { topico -> topico.id == id }
+            .findFirst().orElseThrow{NotFoundException(notFoundMessage)}
         return topicoViewMapper.map(topico)
     }
 
@@ -89,7 +95,8 @@ class TopicoService(
     }
 
     fun atualizar(atualizarTopico: AtualizarTopicoForm) :TopicoView{
-        val topico = topicos.stream().filter { topico -> topico.id == atualizarTopico.id }.findFirst().get()
+        val topico = topicos.stream().filter { topico -> topico.id == atualizarTopico.id }
+            .findFirst().orElseThrow{NotFoundException(notFoundMessage)}
         val topicoAtualizado = Topico(
             id = atualizarTopico.id,
             titulo = atualizarTopico.titulo,
@@ -106,7 +113,9 @@ class TopicoService(
     }
 
     fun deletar(id: Long) {
-        val topico = topicos.stream().filter { topico -> topico.id == id }.findFirst().get()
+        val topico = topicos.stream().filter { topico -> topico.id == id }
+            .findFirst().orElseThrow{NotFoundException(notFoundMessage)}
         topicos = topicos.minus(topico)
     }
+
 }
