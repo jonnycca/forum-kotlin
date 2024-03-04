@@ -6,19 +6,15 @@ import br.com.forum.dto.TopicoView
 import br.com.forum.exception.NotFoundException
 import br.com.forum.mapper.TopicoFormMapper
 import br.com.forum.mapper.TopicoViewMapper
-import br.com.forum.model.Curso
-import br.com.forum.model.Topico
-import br.com.forum.model.Usuario
 import br.com.forum.repository.TopicoRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import java.util.*
 import java.util.stream.Collectors
 
 @Service
 class TopicoService(
     private var topicoRepository: TopicoRepository,
-    private val cursoService: CursoService,
-    private val usuarioService: UsuarioService,
     private val topicoViewMapper: TopicoViewMapper,
     private val topicoFormMapper: TopicoFormMapper
 ) {
@@ -27,13 +23,21 @@ class TopicoService(
         private const val notFoundMessage = "Topico não encontrado"
     }
 
-    fun listar(): List<TopicoView> {
-        return topicoRepository.findAll().stream().map { topico -> topicoViewMapper.map(topico) }.collect(Collectors.toList())
+    fun listar(
+        nomeCurso: String?,
+        pageable: Pageable
+    ): Page<TopicoView> {
+        val topicos = if (nomeCurso == null) {
+            topicoRepository.findAll(pageable)
+        } else {
+            topicoRepository.findByCursoNome(nomeCurso, pageable)
+        }
+        return topicos.map { topico -> topicoViewMapper.map(topico) }
     }
 
     fun buscarPorId(id: Long): TopicoView {
         val topico = topicoRepository.findById(id).stream().filter { topico -> topico.id == id }
-            .findFirst().orElseThrow{NotFoundException(notFoundMessage)}
+            .findFirst().orElseThrow { NotFoundException(notFoundMessage) }
         return topicoViewMapper.map(topico)
     }
 
@@ -44,9 +48,10 @@ class TopicoService(
 
     }
 
-    fun atualizar(atualizarTopico: AtualizarTopicoForm) :TopicoView{
-        val topico = topicoRepository.findById(atualizarTopico.id).stream().filter { topico -> topico.id == atualizarTopico.id }
-            .findFirst().orElseThrow{NotFoundException(notFoundMessage)}
+    fun atualizar(atualizarTopico: AtualizarTopicoForm): TopicoView {
+        val topico =
+            topicoRepository.findById(atualizarTopico.id).stream().filter { topico -> topico.id == atualizarTopico.id }
+                .findFirst().orElseThrow { NotFoundException(notFoundMessage) }
 
         topico.titulo = atualizarTopico.titulo
         topico.mensagem = atualizarTopico.mensagem
